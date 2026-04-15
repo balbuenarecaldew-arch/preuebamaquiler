@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Maquiler</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Teko:wght@500;600;700&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --yellow: #f2b41e;
+      --yellow-dim: #c8930f;
+      --dark: #111111;
+      --surface: #1a1a1a;
+      --surface2: #222222;
+      --surface3: #2c2c2c;
+      --border: #333333;
+      --text: #f0f0f0;
+      --text-muted: #888888;
+      --green: #2ecc71;
+      --red: #e74c3c;
+      --orange: #f39c12;
+      --radius: 6px;
+      --font-display: 'Teko', sans-serif;
+      --font-body: 'Archivo', sans-serif;
+    }
+
+    html { font-size: 16px; }
+    body {
+      background: var(--dark);
+      color: var(--text);
+      font-family: var(--font-body);
+      min-height: 100vh;
+    }
+
+    /* ── LOGIN ── */
+    #login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--dark);
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 39px, #1f1f1f 39px, #1f1f1f 40px),
+        repeating-linear-gradient(90deg, transparent, transparent 39px, #1f1f1f 39px, #1f1f1f 40px);
+    }
+
+    .login-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--yellow);
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 380px;
+      border-radius: var(--radius);
+    }
+
+    .login-logo {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--yellow);
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+    }
+
+    .login-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 2rem;
+    }
+
+    /* ── FORMS ── */
+    .field-group { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
+    .field-group label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 600; }
+    .field-group input, .field-group select, .field-group textarea {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.65rem 0.8rem;
+      border-radius: var(--radius);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+    .field-group input:focus, .field-group select:focus, .field-group textarea:focus {
+      outline: none;
+      border-color: var(--yellow);
+    }
+    .field-group textarea { resize: vertical; min-height: 80px; }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.2rem;
+      border-radius: var(--radius);
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s;
+      text-decoration: none;
+      line-height: 1;
+    }
+    .btn-primary { background: var(--yellow); color: var(--dark); }
+    .btn-primary:hover { background: var(--yellow-dim); }
+    .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+    .btn-ghost:hover { border-color: var(--text-muted); color: var(--text); }
+    .btn-danger { background: transparent; color: var(--red); border: 1px solid var(--red); }
+    .btn-danger:hover { background: var(--red); color: #fff; }
+    .btn-success { background: var(--green); color: #fff; }
+    .btn-block { width: 100%; justify-content: center; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── FEEDBACK ── */
+    .feedback {
+      font-size: 0.82rem;
+      padding: 0.6rem 0.8rem;
+      border-radius: var(--radius);
+      margin-top: 0.75rem;
+      display: none;
+    }
+    .feedback.show { display: block; }
+    .feedback.error { background: rgba(231,76,60,0.15); border: 1px solid var(--red); color: #ff8a80; }
+    .feedback.success { background: rgba(46,204,113,0.15); border: 1px solid var(--green); color: #69f0ae; }
+    .feedback.info { background: rgba(242,180,30,0.1); border: 1px solid var(--yellow); color: var(--yellow); }
+
+    /* ── LAYOUT ── */
+    #admin-screen { display: none; flex-direction: row; min-height: 100vh; }
+
+    .sidebar {
+      width: 220px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+
+    .sidebar-logo {
+      padding: 1.4rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-logo strong {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      color: var(--yellow);
+      letter-spacing: 1px;
+      display: block;
+    }
+    .sidebar-logo span { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+
+    .sidebar-nav { flex: 1; padding: 1rem 0; }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      padding: 0.75rem 1.2rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      border-left: 3px solid transparent;
+      user-select: none;
+    }
+    .nav-item:hover { color: var(--text); background: var(--surface2); }
+    .nav-item.active { color: var(--yellow); border-left-color: var(--yellow); background: rgba(242,180,30,0.06); }
+    .nav-icon { font-size: 1.1rem; width: 20px; text-align: center; }
+
+    .sidebar-footer {
+      padding: 1rem 1.2rem;
+      border-top: 1px solid var(--border);
+    }
+    .user-email { font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.6rem; word-break: break-all; }
+
+    /* ── MAIN CONTENT ── */
+    .main-content { flex: 1; overflow-y: auto; }
+
+    .page-header {
+      padding: 1.5rem 2rem 1rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .page-title {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .page-body { padding: 1.5rem 2rem; }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── CARDS / GRID ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--yellow);
+      letter-spacing: 0.5px;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.1rem;
+    }
+    .stat-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 0.4rem; }
+    .stat-value { font-family: var(--font-display); font-size: 2rem; font-weight: 600; color: var(--yellow); line-height: 1; }
+    .stat-sub { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem; }
+
+    /* ── GALLERY ── */
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 1.5rem;
+      background: var(--surface2);
+    }
+    .upload-zone:hover, .upload-zone.drag-over {
+      border-color: var(--yellow);
+      background: rgba(242,180,30,0.05);
+    }
+    .upload-zone input[type="file"] { display: none; }
+    .upload-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+    .upload-zone p { color: var(--text-muted); font-size: 0.85rem; }
+    .upload-zone strong { color: var(--yellow); }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 1rem;
+    }
+    .photo-item {
+      position: relative;
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      aspect-ratio: 1;
+    }
+    .photo-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .photo-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .photo-item:hover .photo-overlay { opacity: 1; }
+    .photo-name {
+      font-size: 0.7rem;
+      color: #fff;
+      word-break: break-all;
+      padding: 0 0.5rem;
+      text-align: center;
+    }
+
+    .upload-progress {
+      height: 4px;
+      background: var(--surface3);
+      border-radius: 2px;
+      margin-top: 1rem;
+      overflow: hidden;
+      display: none;
+    }
+    .upload-progress.show { display: block; }
+    .upload-bar {
+      height: 100%;
+      background: var(--yellow);
+      width: 0%;
+      transition: width 0.3s;
+    }
+
+    /* ── RESERVATIONS ── */
+    .reservas-filters {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .filter-btn {
+      padding: 0.35rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .filter-btn.active { background: var(--yellow); color: var(--dark); border-color: var(--yellow); }
+    .filter-search {
+      margin-left: auto;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.35rem 0.75rem;
+      border-radius: var(--radius);
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+    }
+    .filter-search:focus { outline: none; border-color: var(--yellow); }
+
+    .reserva-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.75rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.75rem;
+      align-items: start;
+      transition: border-color 0.15s;
+    }
+    .reserva-card:hover { border-color: #444; }
+    .reserva-card.status-pendiente { border-left: 3px solid var(--orange); }
+    .reserva-card.status-confirmado { border-left: 3px solid var(--green); }
+    .reserva-card.status-cancelado { border-left: 3px solid var(--red); opacity: 0.7; }
+
+    .reserva-name { font-weight: 700; font-size: 1rem; margin-bottom: 0.3rem; }
+    .reserva-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.2rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .reserva-meta span { display: flex; align-items: center; gap: 0.3rem; }
+    .reserva-message { font-size: 0.82rem; color: var(--text-muted); margin-top: 0.5rem; font-style: italic; }
+
+    .reserva-actions { display: flex; flex-direction: column; gap: 0.4rem; align-items: flex-end; }
+    .status-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 0.25rem 0.6rem;
+      border-radius: 20px;
+    }
+    .status-badge.pendiente { background: rgba(243,156,18,0.15); color: var(--orange); }
+    .status-badge.confirmado { background: rgba(46,204,113,0.15); color: var(--green); }
+    .status-badge.cancelado { background: rgba(231,76,60,0.15); color: var(--red); }
+
+    .select-status {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.3rem 0.5rem;
+      border-radius: var(--radius);
+      font-size: 0.78rem;
+      font-family: var(--font-body);
+      cursor: pointer;
+    }
+
+    /* ── CONFIG ── */
+    .config-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem;
+    }
+
+    .availability-selector {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+    }
+    .avail-opt {
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .avail-opt:hover { border-color: var(--yellow); }
+    .avail-opt.active-disponible { background: rgba(46,204,113,0.15); border-color: var(--green); color: var(--green); }
+    .avail-opt.active-limitado { background: rgba(243,156,18,0.15); border-color: var(--orange); color: var(--orange); }
+    .avail-opt.active-completo { background: rgba(231,76,60,0.15); border-color: var(--red); color: var(--red); }
+
+    .precio-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.5rem;
+      align-items: end;
+      margin-bottom: 0.75rem;
+    }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-muted);
+    }
+    .empty-state .empty-icon { font-size: 3rem; margin-bottom: 0.75rem; }
+    .empty-state p { font-size: 0.9rem; }
+
+    /* ── LOADING ── */
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--border);
+      border-top-color: var(--yellow);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-overlay {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      gap: 0.75rem;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      #admin-screen { flex-direction: column; }
+      .mobile-nav {
+        display: flex;
+        overflow-x: auto;
+        gap: 0;
+        border-bottom: 1px solid var(--border);
+        background: var(--surface);
+      }
+      .mobile-nav .nav-item {
+        flex-direction: column;
+        gap: 0.2rem;
+        padding: 0.75rem;
+        font-size: 0.7rem;
+        border-left: none;
+        border-bottom: 3px solid transparent;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      .mobile-nav .nav-item.active { border-bottom-color: var(--yellow); border-left: none; }
+      .page-body { padding: 1rem; }
+      .page-header { padding: 1rem; }
+    }
+    @media (min-width: 769px) { .mobile-nav { display: none; } }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      z-index: 1000;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s;
+      max-width: 300px;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+    #toast.success { border-left: 3px solid var(--green); }
+    #toast.error { border-left: 3px solid var(--red); }
+
+    /* ── CONFIG BANNER ── */
+    #config-banner {
+      background: rgba(242,180,30,0.1);
+      border: 1px solid var(--yellow);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      margin: 1rem 2rem;
+      font-size: 0.85rem;
+    }
+    #config-banner strong { color: var(--yellow); display: block; margin-bottom: 0.5rem; }
+    #config-banner code {
+      display: block;
+      background: var(--surface2);
+      padding: 0.75rem;
+      border-radius: 4px;
+      font-size: 0.78rem;
+      margin: 0.5rem 0;
+      word-break: break-all;
+      color: #aef;
+      white-space: pre;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     🔥 CONFIGURACIÓN FIREBASE + CLOUDINARY
+     ══════════════════════════════════════ -->
+<script>
+  const FIREBASE_CONFIG = {
+    apiKey:            "AIzaSyCgkKYrnxCCyImkIc3lMin4acrLKzr4mlQ",
+    authDomain:        "maquiler-b35dc.firebaseapp.com",
+    projectId:         "maquiler-b35dc",
+    storageBucket:     "maquiler-b35dc.firebasestorage.app",
+    messagingSenderId: "506992586359",
+    appId:             "1:506992586359:web:a395756d063cbf74042072"
+  };
+
+  // ──────────────────────────────────────
+  // CLOUDINARY — fotos gratis sin Storage
+  // 1. Creá cuenta en cloudinary.com
+  // 2. Settings → Upload → Upload Presets → Add preset → Unsigned
+  // 3. Reemplazá estos dos valores:
+  const CLOUDINARY_CLOUD_NAME  = "dxxyibglf";
+  const CLOUDINARY_UPLOAD_PRESET = "galeria_maquiler";
+  // ──────────────────────────────────────
+
+  const WA_NUMBER = "595972848607";
+</script>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- ════════ LOGIN SCREEN ════════ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">Maquiler</div>
+    <div class="login-subtitle">Panel de administración</div>
+    <div class="field-group">
+      <label>Email</label>
+      <input type="email" id="login-email" placeholder="admin@example.com" autocomplete="email" />
+    </div>
+    <div class="field-group">
+      <label>Contraseña</label>
+      <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" />
+    </div>
+    <button class="btn btn-primary btn-block" id="login-btn" onclick="handleLogin()">Ingresar</button>
+    <div class="feedback" id="login-feedback"></div>
+  </div>
+</div>
+
+<!-- ════════ ADMIN SCREEN ════════ -->
+<div id="admin-screen">
+
+  <!-- Sidebar desktop -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <strong>Maquiler</strong>
+      <span>Admin Panel</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" onclick="switchTab('dashboard')" data-tab="dashboard">
+        <span class="nav-icon">📊</span> Dashboard
+      </div>
+      <div class="nav-item" onclick="switchTab('galeria')" data-tab="galeria">
+        <span class="nav-icon">🖼️</span> Galería
+      </div>
+      <div class="nav-item" onclick="switchTab('reservas')" data-tab="reservas">
+        <span class="nav-icon">📋</span> Reservas
+        <span id="badge-reservas" style="margin-left:auto;background:var(--orange);color:#000;font-size:0.65rem;font-weight:700;padding:0.1rem 0.45rem;border-radius:10px;display:none"></span>
+      </div>
+      <div class="nav-item" onclick="switchTab('config')" data-tab="config">
+        <span class="nav-icon">⚙️</span> Configuración
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-email" id="user-email-display"></div>
+      <button class="btn btn-ghost btn-block" onclick="handleLogout()">Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <!-- Mobile nav -->
+  <nav class="mobile-nav">
+    <div class="nav-item active" onclick="switchTab('dashboard')" data-tab="dashboard"><span>📊</span> Dashboard</div>
+    <div class="nav-item" onclick="switchTab('galeria')" data-tab="galeria"><span>🖼️</span> Galería</div>
+    <div class="nav-item" onclick="switchTab('reservas')" data-tab="reservas"><span>📋</span> Reservas</div>
+    <div class="nav-item" onclick="switchTab('config')" data-tab="config"><span>⚙️</span> Config</div>
+    <div class="nav-item" onclick="handleLogout()" style="margin-left:auto"><span>🚪</span> Salir</div>
+  </nav>
+
+  <main class="main-content">
+
+    <!-- Banner de configuración pendiente -->
+    <div id="config-banner" style="display:none">
+      <strong>⚠️ Configuración Firebase pendiente</strong>
+      Reemplazá los valores en la sección <code>FIREBASE_CONFIG</code> del archivo con los de tu proyecto Firebase.
+      Los encontrás en: <em>Firebase Console → Project Settings → General → Tu app web</em>
+    </div>
+
+    <!-- ── DASHBOARD ── -->
+    <div class="tab-panel active" id="tab-dashboard">
+      <div class="page-header">
+        <div class="page-title">Dashboard</div>
+        <div id="availability-indicator" style="font-size:0.8rem;color:var(--text-muted)">Cargando…</div>
+      </div>
+      <div class="page-body">
+        <div class="stats-row" id="stats-row">
+          <div class="stat-card">
+            <div class="stat-label">Reservas totales</div>
+            <div class="stat-value" id="stat-total">–</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Pendientes</div>
+            <div class="stat-value" style="color:var(--orange)" id="stat-pending">–</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Confirmadas</div>
+            <div class="stat-value" style="color:var(--green)" id="stat-confirmed">–</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Fotos en galería</div>
+            <div class="stat-value" id="stat-photos">–</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Últimas reservas</div>
+          <div id="recent-reservas">
+            <div class="loading-overlay"><div class="spinner"></div> Cargando…</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── GALERÍA ── -->
+    <div class="tab-panel" id="tab-galeria">
+      <div class="page-header">
+        <div class="page-title">Galería de fotos</div>
+        <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">+ Subir foto</button>
+      </div>
+      <div class="page-body">
+        <div class="upload-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+          <input type="file" id="file-input" multiple accept="image/*" onchange="handleFileUpload(this.files)" />
+          <div class="upload-icon">📸</div>
+          <p><strong>Hacé clic o arrastrá imágenes aquí</strong></p>
+          <p>JPG, PNG, WebP · Máximo 5MB por archivo</p>
+        </div>
+        <div class="upload-progress" id="upload-progress">
+          <div class="upload-bar" id="upload-bar"></div>
+        </div>
+        <div class="feedback" id="gallery-feedback"></div>
+
+        <div id="photo-grid" class="photo-grid">
+          <div class="loading-overlay"><div class="spinner"></div> Cargando fotos…</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RESERVAS ── -->
+    <div class="tab-panel" id="tab-reservas">
+      <div class="page-header">
+        <div class="page-title">Reservas</div>
+        <button class="btn btn-ghost" onclick="loadReservas()">↻ Actualizar</button>
+      </div>
+      <div class="page-body">
+        <div class="reservas-filters">
+          <button class="filter-btn active" onclick="filterReservas('todas', this)">Todas</button>
+          <button class="filter-btn" onclick="filterReservas('pendiente', this)">Pendientes</button>
+          <button class="filter-btn" onclick="filterReservas('confirmado', this)">Confirmadas</button>
+          <button class="filter-btn" onclick="filterReservas('cancelado', this)">Canceladas</button>
+          <input class="filter-search" id="search-input" placeholder="Buscar nombre o barrio…" oninput="renderReservas()" />
+        </div>
+        <div id="reservas-list">
+          <div class="loading-overlay"><div class="spinner"></div> Cargando reservas…</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CONFIGURACIÓN ── -->
+    <div class="tab-panel" id="tab-config">
+      <div class="page-header">
+        <div class="page-title">Configuración</div>
+      </div>
+      <div class="page-body">
+        <div class="config-grid">
+
+          <!-- Disponibilidad -->
+          <div class="card">
+            <div class="card-title">Disponibilidad</div>
+            <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:1rem">Se muestra en el header de la landing page.</p>
+            <div class="availability-selector" id="avail-selector">
+              <div class="avail-opt" data-val="disponible" onclick="selectAvailability('disponible')">✅ Disponible</div>
+              <div class="avail-opt" data-val="limitado" onclick="selectAvailability('limitado')">⚠️ Limitado</div>
+              <div class="avail-opt" data-val="completo" onclick="selectAvailability('completo')">🔴 Completo</div>
+            </div>
+            <button class="btn btn-primary" style="margin-top:1rem" onclick="saveConfig()">Guardar disponibilidad</button>
+          </div>
+
+          <!-- Precios -->
+          <div class="card">
+            <div class="card-title">Precios</div>
+            <div class="precio-row">
+              <div class="field-group" style="margin:0">
+                <label>Precio por hora (Gs)</label>
+                <input type="number" id="price-hour" placeholder="Ej. 220000" />
+              </div>
+            </div>
+            <div class="precio-row">
+              <div class="field-group" style="margin:0">
+                <label>Precio mínimo / media jornada (Gs)</label>
+                <input type="number" id="price-half" placeholder="Ej. 400000" />
+              </div>
+            </div>
+            <div class="precio-row">
+              <div class="field-group" style="margin:0">
+                <label>Precio jornada completa (Gs)</label>
+                <input type="number" id="price-full" placeholder="Ej. 700000" />
+              </div>
+            </div>
+            <div class="field-group" style="margin-top:0.5rem">
+              <label>Nota de precios (opcional)</label>
+              <textarea id="price-note" rows="2" placeholder="Ej. Precios sujetos a distancia de traslado."></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="saveConfig()">Guardar precios</button>
+            <div class="feedback" id="config-feedback"></div>
+          </div>
+
+          <!-- WhatsApp -->
+          <div class="card">
+            <div class="card-title">Zona de cobertura</div>
+            <div class="field-group">
+              <label>Descripción de zona</label>
+              <textarea id="zone-text" rows="3" placeholder="Ej. Asunción, Gran Asunción y zonas cercanas."></textarea>
+            </div>
+            <div class="field-group">
+              <label>Mensaje predeterminado WhatsApp</label>
+              <textarea id="wa-message" rows="3" placeholder="Ej. Hola, quiero reservar la mini cargadora."></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="saveConfig()">Guardar</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Firebase SDKs — Storage NO usado, se usa Cloudinary gratis -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+// ════════════════════════════════════════════════════════════
+// INICIALIZACIÓN
+// ════════════════════════════════════════════════════════════
+const isConfigured = FIREBASE_CONFIG.apiKey !== "TU_API_KEY";
+let app, auth, db;
+
+if (isConfigured) {
+  app  = firebase.initializeApp(FIREBASE_CONFIG);
+  auth = firebase.auth();
+  db   = firebase.firestore();
+  // Storage de Firebase NO usado — se usa Cloudinary gratis
+} else {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('admin-screen').style.display = 'flex';
+  document.getElementById('config-banner').style.display = 'block';
+  loadDemoMode();
+}
+
+// Estado global
+let allReservas     = [];
+let currentFilter   = 'todas';
+let selectedAvail   = 'disponible';
+let photoList       = []; // { public_id, url, name }
+const cloudinaryConfigured = () => CLOUDINARY_CLOUD_NAME !== "TU_CLOUD_NAME";
+
+// ════════════════════════════════════════════════════════════
+// AUTH
+// ════════════════════════════════════════════════════════════
+if (isConfigured) {
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('admin-screen').style.display = 'flex';
+      document.getElementById('user-email-display').textContent = user.email;
+      initAdmin();
+    } else {
+      document.getElementById('login-screen').style.display = 'flex';
+      document.getElementById('admin-screen').style.display = 'none';
+    }
+  });
+}
+
+async function handleLogin() {
+  if (!isConfigured) return;
+  const email    = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  const btn      = document.getElementById('login-btn');
+  const feedback = document.getElementById('login-feedback');
+
+  if (!email || !password) { showFeedback(feedback, 'Completá email y contraseña.', 'error'); return; }
+
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> Ingresando…';
+  feedback.className = 'feedback';
+
+  try {
+    await auth.signInWithEmailAndPassword(email, password);
+  } catch (e) {
+    const msgs = {
+      'auth/wrong-password':    'Contraseña incorrecta.',
+      'auth/user-not-found':    'No existe una cuenta con ese email.',
+      'auth/too-many-requests': 'Demasiados intentos. Intentá más tarde.',
+      'auth/invalid-credential':'Email o contraseña incorrectos.',
+    };
+    showFeedback(feedback, msgs[e.code] || 'Error al ingresar: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Ingresar';
+  }
+}
+
+async function handleLogout() {
+  if (isConfigured) await auth.signOut();
+  else location.reload();
+}
+
+// Enter en login
+document.getElementById('login-password')?.addEventListener('keydown', e => {
+  if (e.key === 'Enter') handleLogin();
+});
+
+// ════════════════════════════════════════════════════════════
+// INICIALIZACIÓN ADMIN
+// ════════════════════════════════════════════════════════════
+function initAdmin() {
+  loadStats();
+  loadReservas();
+  loadPhotos();
+  loadConfig();
+}
+
+// ════════════════════════════════════════════════════════════
+// NAVEGACIÓN
+// ════════════════════════════════════════════════════════════
+function switchTab(tab) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.querySelectorAll(`[data-tab="${tab}"]`).forEach(n => n.classList.add('active'));
+}
+
+// ════════════════════════════════════════════════════════════
+// ESTADÍSTICAS
+// ════════════════════════════════════════════════════════════
+async function loadStats() {
+  if (!isConfigured) return;
+  try {
+    const snap = await db.collection('reservas').get();
+    const docs = snap.docs.map(d => d.data());
+    const total    = docs.length;
+    const pending  = docs.filter(d => d.status === 'pendiente').length;
+    const confirm  = docs.filter(d => d.status === 'confirmado').length;
+
+    document.getElementById('stat-total').textContent     = total;
+    document.getElementById('stat-pending').textContent   = pending;
+    document.getElementById('stat-confirmed').textContent = confirm;
+
+    if (pending > 0) {
+      const badge = document.getElementById('badge-reservas');
+      badge.textContent = pending;
+      badge.style.display = 'inline';
+    }
+  } catch(e) { console.error(e); }
+}
+
+// ════════════════════════════════════════════════════════════
+// RESERVAS
+// ════════════════════════════════════════════════════════════
+async function loadReservas() {
+  if (!isConfigured) return;
+  const container = document.getElementById('reservas-list');
+  const recent    = document.getElementById('recent-reservas');
+  container.innerHTML = `<div class="loading-overlay"><div class="spinner"></div> Cargando…</div>`;
+
+  try {
+    const snap = await db.collection('reservas').orderBy('createdAt', 'desc').get();
+    allReservas = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderReservas();
+    renderRecent(recent);
+    loadStats();
+  } catch(e) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><p>${e.message}</p></div>`;
+  }
+}
+
+function filterReservas(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderReservas();
+}
+
+function renderReservas() {
+  const container = document.getElementById('reservas-list');
+  const search    = (document.getElementById('search-input')?.value || '').toLowerCase();
+
+  let list = allReservas;
+  if (currentFilter !== 'todas') list = list.filter(r => r.status === currentFilter);
+  if (search) list = list.filter(r =>
+    (r.customerName || '').toLowerCase().includes(search) ||
+    (r.location     || '').toLowerCase().includes(search)
+  );
+
+  if (!list.length) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><p>No hay reservas en esta categoría.</p></div>`;
+    return;
+  }
+
+  container.innerHTML = list.map(r => buildReservaCard(r)).join('');
+}
+
+function buildReservaCard(r) {
+  const status = r.status || 'pendiente';
+  const fecha  = r.desiredDate || '–';
+  const horas  = r.estimatedHours ? r.estimatedHours + 'h' : '–';
+  const trabajo = r.jobType || '–';
+  const ts = r.createdAt?.toDate ? r.createdAt.toDate().toLocaleDateString('es-PY') : '–';
+
+  const waText = encodeURIComponent(
+    `Hola ${r.customerName}, confirmamos tu reserva para el ${fecha} en ${r.location}. Trabajo: ${trabajo}. Horas: ${horas}.`
+  );
+
+  return `
+    <div class="reserva-card status-${status}" id="card-${r.id}">
+      <div>
+        <div class="reserva-name">${r.customerName || 'Sin nombre'}</div>
+        <div class="reserva-meta">
+          <span>📅 ${fecha}</span>
+          <span>⏱ ${horas}</span>
+          <span>📍 ${r.location || '–'}</span>
+          <span>🔧 ${trabajo}</span>
+          ${r.phone ? `<span>📱 ${r.phone}</span>` : ''}
+          <span style="color:#555">📆 Recibido: ${ts}</span>
+        </div>
+        ${r.message ? `<div class="reserva-message">"${r.message}"</div>` : ''}
+      </div>
+      <div class="reserva-actions">
+        <span class="status-badge ${status}">${status}</span>
+        <select class="select-status" onchange="updateStatus('${r.id}', this.value)">
+          <option value="pendiente"  ${status==='pendiente' ?'selected':''}>Pendiente</option>
+          <option value="confirmado" ${status==='confirmado'?'selected':''}>Confirmado</option>
+          <option value="cancelado"  ${status==='cancelado' ?'selected':''}>Cancelado</option>
+        </select>
+        ${r.phone ? `<a class="btn btn-success" style="font-size:0.75rem;padding:0.4rem 0.7rem" href="https://wa.me/${WA_NUMBER}?text=${waText}" target="_blank">WhatsApp</a>` : ''}
+        <button class="btn btn-danger" style="font-size:0.75rem;padding:0.4rem 0.7rem" onclick="deleteReserva('${r.id}')">Eliminar</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderRecent(container) {
+  const recent = allReservas.slice(0, 3);
+  if (!recent.length) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><p>Sin reservas aún.</p></div>`;
+    return;
+  }
+  container.innerHTML = recent.map(r => buildReservaCard(r)).join('');
+}
+
+async function updateStatus(id, newStatus) {
+  if (!isConfigured) return;
+  try {
+    await db.collection('reservas').doc(id).update({ status: newStatus });
+    const r = allReservas.find(x => x.id === id);
+    if (r) r.status = newStatus;
+    renderReservas();
+    loadStats();
+    showToast('Estado actualizado', 'success');
+  } catch(e) {
+    showToast('Error: ' + e.message, 'error');
+  }
+}
+
+async function deleteReserva(id) {
+  if (!confirm('¿Eliminar esta reserva? Esta acción no se puede deshacer.')) return;
+  if (!isConfigured) return;
+  try {
+    await db.collection('reservas').doc(id).delete();
+    allReservas = allReservas.filter(x => x.id !== id);
+    renderReservas();
+    loadStats();
+    showToast('Reserva eliminada', 'success');
+  } catch(e) {
+    showToast('Error: ' + e.message, 'error');
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// GALERÍA — Cloudinary (gratis, sin Firebase Storage)
+// Las URLs se guardan en Firestore colección "fotos"
+// ════════════════════════════════════════════════════════════
+async function loadPhotos() {
+  if (!isConfigured) return;
+  const grid = document.getElementById('photo-grid');
+  grid.innerHTML = `<div class="loading-overlay"><div class="spinner"></div> Cargando fotos…</div>`;
+
+  if (!cloudinaryConfigured()) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+      <div class="empty-icon">☁️</div>
+      <p>Configurá <strong>CLOUDINARY_CLOUD_NAME</strong> y <strong>CLOUDINARY_UPLOAD_PRESET</strong> en el archivo para subir fotos gratis.</p>
+    </div>`;
+    document.getElementById('stat-photos').textContent = '–';
+    return;
+  }
+
+  try {
+    const snap = await db.collection('fotos').orderBy('createdAt', 'desc').get();
+    photoList   = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    document.getElementById('stat-photos').textContent = photoList.length;
+
+    if (!photoList.length) {
+      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🖼️</div><p>No hay fotos. Subí la primera.</p></div>`;
+      return;
+    }
+
+    grid.innerHTML = photoList.map(p => `
+      <div class="photo-item">
+        <img src="${p.url}" alt="${p.name}" loading="lazy" />
+        <div class="photo-overlay">
+          <div class="photo-name">${p.name}</div>
+          <button class="btn btn-danger" style="font-size:0.72rem;padding:0.3rem 0.6rem" onclick="deletePhoto('${p.id}', '${p.publicId}')">Eliminar</button>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">⚠️</div><p>${e.message}</p></div>`;
+  }
+}
+
+async function handleFileUpload(files) {
+  if (!isConfigured || !files.length) return;
+  if (!cloudinaryConfigured()) {
+    showToast('Configurá Cloudinary primero', 'error');
+    return;
+  }
+
+  const feedback = document.getElementById('gallery-feedback');
+  const progress = document.getElementById('upload-progress');
+  const bar      = document.getElementById('upload-bar');
+
+  const MAX_SIZE   = 5 * 1024 * 1024;
+  const validFiles = Array.from(files).filter(f => {
+    if (!f.type.startsWith('image/')) { showFeedback(feedback, `${f.name} no es imagen.`, 'error'); return false; }
+    if (f.size > MAX_SIZE)            { showFeedback(feedback, `${f.name} supera 5MB.`,   'error'); return false; }
+    return true;
+  });
+  if (!validFiles.length) return;
+
+  progress.classList.add('show');
+  let done = 0;
+
+  for (let i = 0; i < validFiles.length; i++) {
+    const file    = validFiles[i];
+    const formData = new FormData();
+    formData.append('file',         file);
+    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+    formData.append('folder',       'maquiler/galeria');
+
+    try {
+      bar.style.width = Math.round((i / validFiles.length) * 80) + '%';
+
+      const res  = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
+        method: 'POST',
+        body: formData
+      });
+      const data = await res.json();
+
+      if (data.error) throw new Error(data.error.message);
+
+      // Guardamos la URL en Firestore
+      await db.collection('fotos').add({
+        url:       data.secure_url,
+        publicId:  data.public_id,
+        name:      file.name,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      done++;
+      bar.style.width = Math.round(((i + 1) / validFiles.length) * 100) + '%';
+
+    } catch(e) {
+      showFeedback(feedback, 'Error subiendo ' + file.name + ': ' + e.message, 'error');
+    }
+  }
+
+  setTimeout(() => { progress.classList.remove('show'); bar.style.width = '0%'; }, 600);
+  document.getElementById('file-input').value = '';
+
+  if (done > 0) {
+    showFeedback(feedback, `${done} foto${done>1?'s':''} subida${done>1?'s':''} correctamente.`, 'success');
+    loadPhotos();
+    showToast(`${done} foto${done>1?'s':''} subida${done>1?'s':''}`, 'success');
+  }
+}
+
+async function deletePhoto(firestoreId, publicId) {
+  if (!confirm('¿Eliminar esta foto?')) return;
+  if (!isConfigured) return;
+  try {
+    // Eliminamos el registro de Firestore
+    // Nota: la imagen en Cloudinary queda (necesita backend para borrarse)
+    // Pero deja de mostrarse en la galería inmediatamente
+    await db.collection('fotos').doc(firestoreId).delete();
+    loadPhotos();
+    showToast('Foto eliminada de la galería', 'success');
+  } catch(e) {
+    showToast('Error: ' + e.message, 'error');
+  }
+}
+
+// Drag & drop
+const dropZone = document.getElementById('drop-zone');
+dropZone?.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone?.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone?.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  handleFileUpload(e.dataTransfer.files);
+});
+
+// ════════════════════════════════════════════════════════════
+// CONFIGURACIÓN
+// ════════════════════════════════════════════════════════════
+async function loadConfig() {
+  if (!isConfigured) return;
+  try {
+    const doc = await db.collection('config').doc('site').get();
+    if (!doc.exists) return;
+    const d = doc.data();
+    if (d.availability) {
+      selectedAvail = d.availability;
+      updateAvailUI(d.availability);
+    }
+    if (d.priceHour)     document.getElementById('price-hour').value  = d.priceHour;
+    if (d.priceHalf)     document.getElementById('price-half').value  = d.priceHalf;
+    if (d.priceFull)     document.getElementById('price-full').value  = d.priceFull;
+    if (d.priceNote)     document.getElementById('price-note').value  = d.priceNote;
+    if (d.zoneText)      document.getElementById('zone-text').value   = d.zoneText;
+    if (d.waMessage)     document.getElementById('wa-message').value  = d.waMessage;
+
+    const labels = { disponible: '✅ Disponible', limitado: '⚠️ Agenda limitada', completo: '🔴 Sin disponibilidad' };
+    document.getElementById('availability-indicator').textContent = labels[d.availability] || '';
+  } catch(e) { console.error(e); }
+}
+
+function selectAvailability(val) {
+  selectedAvail = val;
+  updateAvailUI(val);
+}
+
+function updateAvailUI(val) {
+  document.querySelectorAll('.avail-opt').forEach(el => {
+    el.className = 'avail-opt';
+    if (el.dataset.val === val) el.classList.add('active-' + val);
+  });
+}
+
+async function saveConfig() {
+  if (!isConfigured) { showToast('Configurá Firebase primero', 'error'); return; }
+  const feedback = document.getElementById('config-feedback');
+  const data = {
+    availability: selectedAvail,
+    priceHour:    document.getElementById('price-hour').value,
+    priceHalf:    document.getElementById('price-half').value,
+    priceFull:    document.getElementById('price-full').value,
+    priceNote:    document.getElementById('price-note').value,
+    zoneText:     document.getElementById('zone-text').value,
+    waMessage:    document.getElementById('wa-message').value,
+    updatedAt:    firebase.firestore.FieldValue.serverTimestamp()
+  };
+  try {
+    await db.collection('config').doc('site').set(data, { merge: true });
+    showFeedback(feedback, 'Configuración guardada correctamente.', 'success');
+    showToast('Configuración guardada', 'success');
+    const labels = { disponible: '✅ Disponible', limitado: '⚠️ Agenda limitada', completo: '🔴 Sin disponibilidad' };
+    document.getElementById('availability-indicator').textContent = labels[selectedAvail] || '';
+  } catch(e) {
+    showFeedback(feedback, 'Error: ' + e.message, 'error');
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// MODO DEMO (sin configurar Firebase)
+// ════════════════════════════════════════════════════════════
+function loadDemoMode() {
+  document.getElementById('user-email-display').textContent = 'demo@maquiler.com';
+  document.getElementById('stat-total').textContent     = '12';
+  document.getElementById('stat-pending').textContent   = '3';
+  document.getElementById('stat-confirmed').textContent = '8';
+  document.getElementById('stat-photos').textContent    = '5';
+  document.getElementById('availability-indicator').textContent = '✅ Disponible (demo)';
+
+  const demoReserva = {
+    id: 'demo1',
+    customerName: 'Carlos López (demo)',
+    phone: '0971000000',
+    location: 'Lambaré, Barrio San Pablo',
+    desiredDate: '2025-05-15',
+    estimatedHours: 4,
+    jobType: 'Movimiento de tierra',
+    message: 'Acceso un poco angosto por el costado.',
+    status: 'pendiente'
+  };
+  allReservas = [demoReserva];
+
+  document.getElementById('recent-reservas').innerHTML = buildReservaCard(demoReserva);
+  document.getElementById('reservas-list').innerHTML   = buildReservaCard(demoReserva);
+  document.getElementById('photo-grid').innerHTML = `
+    <div class="empty-state" style="grid-column:1/-1">
+      <div class="empty-icon">🔥</div>
+      <p>Configurá Firebase para ver y subir fotos reales.</p>
+    </div>`;
+}
+
+// ════════════════════════════════════════════════════════════
+// UTILIDADES
+// ════════════════════════════════════════════════════════════
+function showFeedback(el, msg, type) {
+  el.textContent = msg;
+  el.className   = `feedback show ${type}`;
+  setTimeout(() => el.className = 'feedback', 5000);
+}
+
+let toastTimer;
+function showToast(msg, type = 'success') {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.className   = `show ${type}`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.className = '', 3500);
+}
+</script>
+</body>
+</html>
