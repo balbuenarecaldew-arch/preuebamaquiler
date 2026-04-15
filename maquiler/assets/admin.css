@@ -1,0 +1,557 @@
+body[data-page="admin-login"],
+body[data-page="admin-section"] {
+  background:
+    radial-gradient(circle at top left, rgba(242, 180, 30, 0.12), transparent 24%),
+    #11100c;
+}
+
+.admin-login-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(380px, 460px);
+}
+
+.admin-login-visual {
+  position: relative;
+}
+
+.admin-login-visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.admin-login-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-content: end;
+  gap: 18px;
+  padding: 48px;
+  background: linear-gradient(180deg, rgba(17, 16, 12, 0.08), rgba(17, 16, 12, 0.84));
+}
+
+.admin-login-overlay h1 {
+  margin: 0;
+  font-family: "Teko", sans-serif;
+  font-size: clamp(3.2rem, 6vw, 5.4rem);
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+
+.admin-login-overlay p {
+  margin: 0;
+  max-width: 52ch;
+  color: #efe3c5;
+  line-height: 1.75;
+}
+
+.login-feature-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.login-feature-list span {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.login-feature-list svg {
+  width: 18px;
+  height: 18px;
+}
+
+.admin-login-panel {
+  display: grid;
+  place-items: center;
+  padding: 28px;
+}
+
+.admin-auth-card {
+  width: 100%;
+  display: grid;
+  gap: 18px;
+  padding: 30px;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+.admin-auth-card h2 {
+  margin: 0;
+  font-family: "Teko", sans-serif;
+  font-size: 2.8rem;
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+
+.admin-auth-card p,
+.admin-login-note,
+.back-link {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.back-link {
+  color: var(--accent);
+}
+
+.admin-layout {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+}
+
+.admin-sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  gap: 24px;
+  padding: 28px 22px;
+  border-right: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+}
+
+.admin-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.admin-sidebar-copy {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.admin-nav {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+
+.admin-nav-link {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+  min-height: 54px;
+  padding: 0 14px;
+  border-radius: 16px;
+  color: var(--muted);
+}
+
+.admin-nav-link.is-active,
+.admin-nav-link:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+}
+
+.admin-nav-icon {
+  width: 18px;
+  height: 18px;
+  color: var(--accent);
+}
+
+.admin-nav-badge {
+  min-width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(242, 180, 30, 0.16);
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.admin-sidebar-footer {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-main {
+  padding: 24px;
+}
+
+.admin-topbar {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.admin-topbar h1 {
+  margin: 8px 0 10px;
+  font-family: "Teko", sans-serif;
+  font-size: clamp(2.8rem, 5vw, 4rem);
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+
+.admin-topbar p {
+  margin: 0;
+  max-width: 64ch;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.admin-topbar-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.admin-content,
+.stack-form {
+  display: grid;
+  gap: 18px;
+}
+
+.admin-panel,
+.admin-stat-card,
+.reservation-card,
+.recent-reservation-card,
+.photo-manager-card,
+.shortcut-card {
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.admin-panel,
+.reservation-card {
+  padding: 24px;
+}
+
+.panel-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 20px;
+}
+
+.panel-head h2 {
+  margin: 0 0 8px;
+  font-family: "Teko", sans-serif;
+  font-size: 2.4rem;
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+
+.panel-head p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.panel-head--split {
+  align-items: center;
+}
+
+.admin-stat-grid,
+.admin-panel-grid,
+.reservation-stats {
+  display: grid;
+  gap: 18px;
+}
+
+.admin-stat-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.admin-panel-grid {
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
+}
+
+.admin-panel--span-2 {
+  min-width: 0;
+}
+
+.admin-stat-card {
+  padding: 22px;
+}
+
+.admin-stat-card--accent {
+  background: linear-gradient(180deg, rgba(242, 180, 30, 0.18), rgba(255, 255, 255, 0.03));
+  border-color: rgba(242, 180, 30, 0.3);
+}
+
+.admin-stat-label {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--muted-2);
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.admin-stat-card strong {
+  display: block;
+  margin-bottom: 10px;
+  font-family: "Teko", sans-serif;
+  font-size: 3.2rem;
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+
+.admin-stat-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.shortcut-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.shortcut-card {
+  display: grid;
+  gap: 12px;
+  padding: 22px;
+}
+
+.shortcut-card-icon {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: rgba(242, 180, 30, 0.12);
+  color: var(--accent);
+}
+
+.shortcut-card strong {
+  font-size: 1.04rem;
+}
+
+.shortcut-card p,
+.admin-check-list p,
+.inline-note p,
+.recent-reservation-card p,
+.recent-reservation-card small,
+.photo-manager-body small,
+.reservation-message {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.admin-check-list,
+.recent-reservations,
+.repeater-list,
+.photo-manager-grid,
+.reservation-list {
+  display: grid;
+  gap: 16px;
+}
+
+.admin-check-list div,
+.inline-note {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: center;
+}
+
+.inline-note {
+  color: var(--muted);
+}
+
+.photo-manager-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.photo-manager-card {
+  overflow: hidden;
+}
+
+.photo-manager-preview {
+  height: 220px;
+  background: var(--panel);
+}
+
+.photo-manager-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-manager-body {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+}
+
+.tag-row,
+.photo-manager-actions,
+.form-actions,
+.admin-topbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.upload-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 20px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  color: #111;
+  font-weight: 700;
+}
+
+.reservation-stats {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.reservation-stat-card {
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--line);
+  text-align: center;
+}
+
+.reservation-stat-card strong {
+  display: block;
+  font-family: "Teko", sans-serif;
+  font-size: 2.5rem;
+  line-height: 0.9;
+}
+
+.reservation-stat-card span {
+  color: var(--muted);
+}
+
+.reservation-card-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.reservation-card h3,
+.recent-reservation-card strong {
+  margin: 0 0 6px;
+}
+
+.reservation-card-head p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.reservation-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin: 18px 0;
+}
+
+.reservation-meta-grid span {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--muted-2);
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.reservation-actions {
+  margin-top: 18px;
+}
+
+.repeater-card {
+  padding: 18px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--line);
+}
+
+.repeater-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.empty-state--admin {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+@media (max-width: 1180px) {
+  .admin-layout {
+    grid-template-columns: 250px minmax(0, 1fr);
+  }
+
+  .admin-stat-grid,
+  .reservation-stats,
+  .shortcut-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-panel-grid,
+  .photo-manager-grid,
+  .reservation-meta-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .admin-login-shell,
+  .admin-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-login-visual {
+    min-height: 320px;
+  }
+
+  .admin-sidebar {
+    position: static;
+    height: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .admin-main {
+    padding: 18px;
+  }
+
+  .admin-topbar,
+  .reservation-card-head {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-login-overlay,
+  .admin-auth-card,
+  .admin-panel,
+  .reservation-card {
+    padding: 20px;
+  }
+
+  .admin-stat-grid,
+  .reservation-stats,
+  .shortcut-grid,
+  .photo-manager-grid {
+    grid-template-columns: 1fr;
+  }
+}
