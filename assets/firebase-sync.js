@@ -1,7 +1,6 @@
 /**
  * firebase-sync.js — Maquiler
- * Sincroniza localStorage ↔ Firestore + fotos en Cloudinary.
- * Sin autenticación — Firestore rules: allow read, write: if true
+ * Convierte base64 → Cloudinary antes de guardar en Firestore.
  */
 (() => {
   const FIREBASE_CONFIG = {
@@ -36,6 +35,66 @@
     db = firebase.firestore();
   }
 
+  // ── Subir base64 a Cloudinary ─────────────────────────────
+  async function uploadBase64(dataUrl) {
+    const form = new FormData();
+    form.append("file", dataUrl);
+    form.append("upload_preset", CLOUDINARY_PRESET);
+    form.append("folder", "maquiler/galeria");
+    const res  = await fetch(
+      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`,
+      { method: "POST", body: form }
+    );
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    return data.secure_url;
+  }
+
+  // ── Convertir todas las fotos base64 del estado → Cloudinary
+  async function resolveBase64Photos(state) {
+    // Clonar para no mutar el original
+    const s = JSON.parse(JSON.stringify(state));
+    let changed = false;
+
+    for (const machine of (s.machines || [])) {
+      for (const photo of (machine.photos || [])) {
+        if (photo.imageUrl && photo.imageUrl.startsWith("data:")) {
+          try {
+            console.log("[sync] Subiendo foto base64 a Cloudinary…");
+            const url = await uploadBase64(photo.imageUrl);
+            photo.imageUrl = url;
+            changed = true;
+            console.log("[sync] Foto subida a Cloudinary ✓", url);
+          } catch (e) {
+            console.warn("[sync] No se pudo subir foto:", e.message);
+          }
+        }
+      }
+    }
+
+    // Si cambiaron URLs, actualizar también localStorage
+    if (changed) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+      console.log("[sync] localStorage actualizado con URLs de Cloudinary ✓");
+    }
+
+    return s;
+  }
+
+  // ── Guardar en Firestore ──────────────────────────────────
+  async function saveToFirestore(state) {
+    if (!db) return;
+    try {
+      // Primero convertir base64 → Cloudinary (Firestore tiene límite de 1MB)
+      const clean = await resolveBase64Photos(state);
+      await db.collection("state").doc("main").set(clean);
+      console.log("[sync] Guardado en Firestore ✓");
+    } catch (e) {
+      console.warn("[sync] Escritura fallida:", e.message);
+    }
+  }
+
+  // ── Leer desde Firestore ──────────────────────────────────
   async function loadFromFirestore() {
     try {
       const doc = await db.collection("state").doc("main").get();
@@ -49,16 +108,7 @@
     }
   }
 
-  async function saveToFirestore(state) {
-    if (!db) return;
-    try {
-      await db.collection("state").doc("main").set(state);
-      console.log("[sync] Guardado en Firestore ✓");
-    } catch (e) {
-      console.warn("[sync] Escritura fallida:", e.message);
-    }
-  }
-
+  // ── Parchar updateState ───────────────────────────────────
   function patchUpdateState() {
     const App = window.MaquilerApp;
     if (!App?.updateState || App._syncPatched) return;
@@ -72,36 +122,6 @@
     console.log("[sync] updateState parchado ✓");
   }
 
-  function patchCompressImageFile() {
-    const tryPatch = () => {
-      const App = window.MaquilerApp;
-      if (!App?.compressImageFile) { setTimeout(tryPatch, 80); return; }
-      if (App._cloudinaryPatched) return;
-      App._cloudinaryPatched = true;
-      const original = App.compressImageFile;
-      App.compressImageFile = async function(file) {
-        try {
-          const form = new FormData();
-          form.append("file", file);
-          form.append("upload_preset", CLOUDINARY_PRESET);
-          form.append("folder", "maquiler/galeria");
-          const res  = await fetch(
-            `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`,
-            { method: "POST", body: form }
-          );
-          const data = await res.json();
-          if (data.error) throw new Error(data.error.message);
-          console.log("[sync] Foto subida a Cloudinary ✓", data.secure_url);
-          return { dataUrl: data.secure_url, width: data.width, height: data.height };
-        } catch (e) {
-          console.warn("[sync] Cloudinary falló, base64:", e.message);
-          return original(file);
-        }
-      };
-    };
-    tryPatch();
-  }
-
   function triggerRerender() {
     window.dispatchEvent(new Event("storage"));
   }
@@ -111,8 +131,6 @@
     catch (e) { console.warn("[sync] Firebase no cargó:", e.message); return; }
 
     const page = document.body?.dataset?.page || "";
-
-    patchCompressImageFile();
 
     if (page === "public") {
       const loaded = await loadFromFirestore();
