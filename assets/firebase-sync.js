@@ -1,6 +1,7 @@
 /**
  * firebase-sync.js — Maquiler
- * Convierte base64 → Cloudinary antes de guardar en Firestore.
+ * Intercepta localStorage.setItem para capturar CUALQUIER cambio de estado
+ * y sincronizarlo con Firestore + Cloudinary.
  */
 (() => {
   const FIREBASE_CONFIG = {
@@ -50,34 +51,28 @@
     return data.secure_url;
   }
 
-  // ── Convertir todas las fotos base64 del estado → Cloudinary
-  async function resolveBase64Photos(state) {
-    // Clonar para no mutar el original
+  // ── Convertir fotos base64 → URL de Cloudinary ────────────
+  async function resolvePhotos(state) {
     const s = JSON.parse(JSON.stringify(state));
     let changed = false;
-
     for (const machine of (s.machines || [])) {
       for (const photo of (machine.photos || [])) {
         if (photo.imageUrl && photo.imageUrl.startsWith("data:")) {
           try {
-            console.log("[sync] Subiendo foto base64 a Cloudinary…");
-            const url = await uploadBase64(photo.imageUrl);
-            photo.imageUrl = url;
+            console.log("[sync] Convirtiendo foto a Cloudinary…");
+            photo.imageUrl = await uploadBase64(photo.imageUrl);
             changed = true;
-            console.log("[sync] Foto subida a Cloudinary ✓", url);
+            console.log("[sync] Foto en Cloudinary ✓");
           } catch (e) {
-            console.warn("[sync] No se pudo subir foto:", e.message);
+            console.warn("[sync] Cloudinary falló:", e.message);
           }
         }
       }
     }
-
-    // Si cambiaron URLs, actualizar también localStorage
     if (changed) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
-      console.log("[sync] localStorage actualizado con URLs de Cloudinary ✓");
+      // Actualizar localStorage con URLs limpias (sin base64)
+      Storage.prototype._setItem.call(localStorage, STORAGE_KEY, JSON.stringify(s));
     }
-
     return s;
   }
 
@@ -85,8 +80,7 @@
   async function saveToFirestore(state) {
     if (!db) return;
     try {
-      // Primero convertir base64 → Cloudinary (Firestore tiene límite de 1MB)
-      const clean = await resolveBase64Photos(state);
+      const clean = await resolvePhotos(state);
       await db.collection("state").doc("main").set(clean);
       console.log("[sync] Guardado en Firestore ✓");
     } catch (e) {
@@ -99,7 +93,7 @@
     try {
       const doc = await db.collection("state").doc("main").get();
       if (!doc.exists) return false;
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(doc.data()));
+      Storage.prototype._setItem.call(localStorage, STORAGE_KEY, JSON.stringify(doc.data()));
       console.log("[sync] Estado cargado desde Firestore ✓");
       return true;
     } catch (e) {
@@ -108,18 +102,20 @@
     }
   }
 
-  // ── Parchar updateState ───────────────────────────────────
-  function patchUpdateState() {
-    const App = window.MaquilerApp;
-    if (!App?.updateState || App._syncPatched) return;
-    App._syncPatched = true;
-    const original = App.updateState;
-    App.updateState = function(mutator) {
-      const result = original(mutator);
-      saveToFirestore(result);
-      return result;
+  // ── CLAVE: interceptar localStorage.setItem ───────────────
+  // Esto captura TODOS los cambios de estado sin importar qué función los hace
+  function patchLocalStorage() {
+    Storage.prototype._setItem = Storage.prototype.setItem;
+    Storage.prototype.setItem  = function(key, value) {
+      this._setItem(key, value);
+      if (this === localStorage && key === STORAGE_KEY) {
+        try {
+          const state = JSON.parse(value);
+          saveToFirestore(state);
+        } catch (e) {}
+      }
     };
-    console.log("[sync] updateState parchado ✓");
+    console.log("[sync] localStorage interceptado ✓");
   }
 
   function triggerRerender() {
@@ -139,7 +135,7 @@
     }
 
     if (page === "admin-section") {
-      patchUpdateState();
+      patchLocalStorage();
       const loaded = await loadFromFirestore();
       if (loaded) triggerRerender();
     }
