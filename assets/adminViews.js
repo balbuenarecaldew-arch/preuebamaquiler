@@ -591,7 +591,7 @@ function renderSettingsPage(state, machine) {
           </div>
         </div>
         <div class="form-grid form-grid-two">
-          ${adminTextField("URL publica del sitio", "siteUrl", machine.config.siteUrl, "Ej. https://balbuenarecaldew-arch.github.io/MAQUILER")}
+          ${adminTextField("URL publica del sitio", "siteUrl", machine.config.siteUrl, "Ej. https://maquinas.pages.dev")}
           ${adminTextField("Nombre del sitio", "siteName", machine.config.siteName || machine.config.businessName, "Ej. Maquiler")}
           ${adminTextField("Titulo SEO", "seoTitle", machine.config.seoTitle, "Ej. Alquiler de Mini Cargadora | Maquiler Asuncion")}
           ${adminTextField("Titulo para redes", "socialTitle", machine.config.socialTitle, "Ej. Alquiler de Mini Cargadora")}

@@ -18,7 +18,7 @@
     config: {
       businessName: "Maquiler",
       siteName: "Maquiler",
-      siteUrl: "https://balbuenarecaldew-arch.github.io/MAQUILER",
+      siteUrl: "https://maquinas.pages.dev",
       machineName: "Mini Cargadora",
       whatsappNumber: "595972848607",
       whatsappMessageTemplate: "Hola, quiero reservar la mini cargadora.",
@@ -374,7 +374,7 @@
 
   function getSeoData(machine) {
     const config = machine?.config || {};
-    const siteUrl = stripTrailingSlash(config.siteUrl || "https://balbuenarecaldew-arch.github.io/MAQUILER");
+    const siteUrl = stripTrailingSlash(config.siteUrl || "https://maquinas.pages.dev");
     const pageUrl = siteUrl ? `${siteUrl}/` : "/";
     const siteName = normalizeText(config.siteName || config.businessName || "Maquiler");
     const socialImageWidth = String(toNumber(config.socialImageWidth) || 1080);
