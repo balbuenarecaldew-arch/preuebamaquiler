@@ -58,14 +58,14 @@
               </span>
             </a>
             <div class="site-nav-links">
-              <a href="#galeria">Galería</a>
+              <a href="#fotos">Fotos</a>
               <a href="#precios">Precios</a>
               <a href="#servicios">Servicios</a>
               <a href="#reservar">Reservar</a>
             </div>
             <a class="button button-primary button-nav" href="${escapeHtml(heroWhatsAppUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(texts.reserveButtonText)}</a>
           </nav>
-          <section class="hero-section container" aria-labelledby="hero-title">
+          <section class="hero-section container" id="fotos" aria-labelledby="hero-title">
             <div class="hero-copy" data-reveal>
               <span class="section-eyebrow">${escapeHtml(texts.heroBadge)}</span>
               <h1 class="hero-title" id="hero-title">${escapeHtml(texts.heroTitle)}</h1>
@@ -115,7 +115,6 @@
         </header>
 
         <main id="contenido">
-          <section class="section" id="galeria" aria-labelledby="galeria-title"><div class="container">${sectionHeaderMarkup(texts.galleryLabel, texts.galleryTitle, texts.galleryIntro, false, "galeria-title")}${renderGallery(machine, heroPhoto)}</div></section>
           <section class="section section-dark" id="precios" aria-labelledby="precios-title"><div class="container">${sectionHeaderMarkup(texts.priceLabel, texts.priceTitle, texts.priceIntro, false, "precios-title")}${renderPricing(machine)}</div></section>
           <section class="section" id="servicios" aria-labelledby="servicios-title"><div class="container">${sectionHeaderMarkup(texts.servicesLabel, texts.servicesTitle, texts.servicesIntro, false, "servicios-title")}${renderServices(machine)}</div></section>
 
@@ -172,34 +171,6 @@
     bindPublicEvents(machine);
     applySeoMetadata(machine, seo);
     revealOnScroll();
-  }
-
-  function renderGallery(machine, heroPhoto) {
-    const photos = getVisiblePhotos(machine);
-    if (!photos.length) {
-      return `<div class="empty-state" data-reveal><div class="empty-state-icon">${iconMarkup("photo")}</div><h3>Galería en preparación</h3><p>Subí fotos desde el panel admin para mostrar la máquina con una presentación más visual.</p></div>`;
-    }
-    return `
-      <div class="gallery-layout">
-        <article class="gallery-spotlight" data-reveal>
-          <img src="${escapeHtml(resolveMediaUrl(heroPhoto.imageUrl))}" alt="${escapeHtml(heroPhoto.altText || machine.config.machineName)}"${getPhotoDimensionAttrs(heroPhoto, 1080, 1085)} loading="lazy" decoding="async" />
-          <div class="gallery-spotlight-copy"><span>Foto principal</span><strong>${escapeHtml(machine.config.machineName)}</strong><p>${escapeHtml(heroPhoto.caption || machine.config.coverageArea)}</p></div>
-        </article>
-        <div class="gallery-grid">
-          ${photos
-            .slice(1)
-            .map(
-              (photo, index) => `
-                <button type="button" class="gallery-card" data-thumb data-photo-url="${escapeHtml(resolveMediaUrl(photo.imageUrl))}" data-photo-alt="${escapeHtml(photo.altText || machine.config.machineName)}" aria-label="${escapeHtml(photo.caption || `Ver foto ${index + 2}`)}">
-                  <img src="${escapeHtml(resolveMediaUrl(photo.imageUrl))}" alt="${escapeHtml(photo.altText || machine.config.machineName)}"${getPhotoDimensionAttrs(photo, 480, 480)} loading="lazy" decoding="async" />
-                  <span>${escapeHtml(photo.caption || `Vista ${index + 2}`)}</span>
-                </button>
-              `
-            )
-            .join("")}
-        </div>
-      </div>
-    `;
   }
 
   function renderPricing(machine) {
