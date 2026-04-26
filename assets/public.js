@@ -40,12 +40,6 @@
     const heroAltText = heroPhoto?.altText || `${config.machineName} para alquiler`;
     const heroFromPrice = config.showPrices && Number(pricing.fromPrice) > 0 ? formatCurrency(pricing.fromPrice) : "Cotización rápida";
     const heroWhatsAppUrl = buildWhatsAppUrl(config.whatsappNumber, config.whatsappMessageTemplate);
-    const quickHighlights = [
-      { icon: "coverage", title: "Cobertura", text: config.coverageArea },
-      { icon: "operator", title: "Operador", text: pricing.operatorIncluded ? "Incluido en la tarifa" : "Se coordina según el trabajo" },
-      { icon: "whatsapp", title: "Reserva", text: "Confirmación directa por WhatsApp" },
-    ];
-
     app.innerHTML = `
       <div class="site-shell">
         <header class="site-header" id="top">
@@ -121,20 +115,6 @@
         </header>
 
         <main id="contenido">
-          <section class="trust-strip" aria-label="Puntos clave del servicio">
-            <div class="container trust-strip-grid">
-              ${quickHighlights
-                .map(
-                  (item) => `
-                    <article class="mini-feature-card" data-reveal>
-                      <span class="mini-feature-icon">${iconMarkup(item.icon)}</span>
-                      <div><strong>${escapeHtml(item.title)}</strong><p>${escapeHtml(item.text)}</p></div>
-                    </article>
-                  `
-                )
-                .join("")}
-            </div>
-          </section>
           <section class="section" id="galeria" aria-labelledby="galeria-title"><div class="container">${sectionHeaderMarkup(texts.galleryLabel, texts.galleryTitle, texts.galleryIntro, false, "galeria-title")}${renderGallery(machine, heroPhoto)}</div></section>
           <section class="section section-dark" id="precios" aria-labelledby="precios-title"><div class="container">${sectionHeaderMarkup(texts.priceLabel, texts.priceTitle, texts.priceIntro, false, "precios-title")}${renderPricing(machine)}</div></section>
           <section class="section" id="servicios" aria-labelledby="servicios-title"><div class="container">${sectionHeaderMarkup(texts.servicesLabel, texts.servicesTitle, texts.servicesIntro, false, "servicios-title")}${renderServices(machine)}</div></section>
@@ -145,7 +125,6 @@
                 ${sectionHeaderMarkup(texts.bookingLabel, texts.bookingTitle, texts.bookingIntro, true, "reservar-title")}
                 <div class="booking-info-stack">
                   <article class="support-card"><span class="support-card-icon">${iconMarkup("whatsapp")}</span><div><strong>${escapeHtml(texts.contactCardTitle)}</strong><p>${escapeHtml(texts.contactCardText)}</p></div></article>
-                  <article class="support-card"><span class="support-card-icon">${iconMarkup("coverage")}</span><div><strong>Zona de cobertura</strong><p>${escapeHtml(config.coverageArea)}</p></div></article>
                   <article class="support-card"><span class="support-card-icon">${iconMarkup("speed")}</span><div><strong>${escapeHtml(availability.label)}</strong><p>${escapeHtml(config.availabilityNote || availability.detail)}</p></div></article>
                 </div>
               </div>
@@ -176,9 +155,6 @@
               </form>
             </div>
           </section>
-
-          <section class="section" id="confianza" aria-labelledby="confianza-title"><div class="container">${sectionHeaderMarkup(texts.trustLabel, texts.trustTitle, texts.trustIntro, false, "confianza-title")}<div class="trust-grid">${renderTrust(machine)}</div></div></section>
-          <section class="section section-dark" aria-labelledby="cta-title"><div class="container"><div class="cta-banner" data-reveal><div><span class="section-eyebrow">Reserva directa</span><h2 id="cta-title">${escapeHtml(texts.ctaBannerTitle)}</h2><p>${escapeHtml(texts.ctaBannerText)}</p></div><div class="cta-banner-actions"><a class="button button-primary" href="${escapeHtml(heroWhatsAppUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(texts.reserveButtonText)}</a><a class="button button-secondary" href="#reservar">Completar formulario</a></div></div></div></section>
         </main>
 
         <footer class="site-footer">
