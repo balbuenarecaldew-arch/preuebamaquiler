@@ -29,7 +29,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Teko:wght@500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/base.css?v=20260426-mobile-gallery" /><link rel="stylesheet" href="assets/public.css?v=20260426-mobile-gallery" />
+  <link rel="stylesheet" href="assets/base.css?v=20260426-mobile-reserva" /><link rel="stylesheet" href="assets/public.css?v=20260426-mobile-reserva" />
   <style>
     @media (max-width: 820px) {
       body[data-page="public"] .site-header { overflow: visible; }
@@ -105,11 +105,94 @@
         right: 18px !important;
         bottom: 18px !important;
       }
+      body[data-page="public"] .section {
+        padding: 40px 0 !important;
+        overflow: hidden !important;
+      }
+      body[data-page="public"] .section .container,
+      body[data-page="public"] .booking-layout,
+      body[data-page="public"] .price-grid,
+      body[data-page="public"] .price-support-grid,
+      body[data-page="public"] .service-grid,
+      body[data-page="public"] .footer-grid,
+      body[data-page="public"] .form-grid,
+      body[data-page="public"] .form-grid-two {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        width: 100% !important;
+        max-width: none !important;
+      }
+      body[data-page="public"] .section .container {
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+      }
+      body[data-page="public"] .booking-layout {
+        gap: 16px !important;
+      }
+      body[data-page="public"] .booking-copy,
+      body[data-page="public"] .booking-form,
+      body[data-page="public"] .price-card,
+      body[data-page="public"] .support-card,
+      body[data-page="public"] .service-card {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        margin: 0 !important;
+      }
+      body[data-page="public"] .booking-form,
+      body[data-page="public"] .price-card,
+      body[data-page="public"] .support-card,
+      body[data-page="public"] .service-card {
+        border-radius: 16px !important;
+        padding: 18px !important;
+      }
+      body[data-page="public"] .support-card {
+        grid-template-columns: 44px 1fr !important;
+        gap: 12px !important;
+      }
+      body[data-page="public"] .support-card p,
+      body[data-page="public"] .price-card-note,
+      body[data-page="public"] .service-card p,
+      body[data-page="public"] .form-helper {
+        font-size: 16px !important;
+        line-height: 1.5 !important;
+        overflow-wrap: anywhere !important;
+      }
+      body[data-page="public"] .form-helper { display: none !important; }
+      body[data-page="public"] .price-card-value {
+        font-size: 42px !important;
+        line-height: 0.95 !important;
+        letter-spacing: 0 !important;
+      }
+      body[data-page="public"] .section-header {
+        margin-bottom: 18px !important;
+      }
+      body[data-page="public"] .section-header h2 {
+        font-size: 36px !important;
+        line-height: 1 !important;
+        letter-spacing: 0 !important;
+      }
+      body[data-page="public"] .field input,
+      body[data-page="public"] .field select,
+      body[data-page="public"] .field textarea {
+        width: 100% !important;
+        min-height: 54px !important;
+        font-size: 16px !important;
+        border-radius: 14px !important;
+      }
+      body[data-page="public"] .field textarea {
+        min-height: 130px !important;
+      }
+      body[data-page="public"] .button-block {
+        width: 100% !important;
+        min-height: 56px !important;
+        border-radius: 16px !important;
+      }
     }
   </style>
-  <script defer src="assets/icons.js?v=20260426-mobile-gallery"></script><script defer src="assets/shared.js?v=20260426-mobile-gallery"></script>
-  <script defer src="assets/ui.js?v=20260426-mobile-gallery"></script><script defer src="assets/public.js?v=20260426-mobile-gallery"></script>
-  <script defer src="assets/app.js?v=20260426-mobile-gallery"></script><script defer src="assets/firebase-sync.js?v=20260426-mobile-gallery"></script>
+  <script defer src="assets/icons.js?v=20260426-mobile-reserva"></script><script defer src="assets/shared.js?v=20260426-mobile-reserva"></script>
+  <script defer src="assets/ui.js?v=20260426-mobile-reserva"></script><script defer src="assets/public.js?v=20260426-mobile-reserva"></script>
+  <script defer src="assets/app.js?v=20260426-mobile-reserva"></script><script defer src="assets/firebase-sync.js?v=20260426-mobile-reserva"></script>
 </head>
 <body data-page="public">
   <a class="skip-link" href="#contenido">Saltar al contenido principal</a>
